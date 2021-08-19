@@ -20,7 +20,7 @@ def main_handler(event, context):
         try:
             msg = MIMEText(mail_body, 'plain', 'utf-8')
             msg['From'] = formataddr(["", my_sender])  # 括号里的对应发件人邮箱昵称、发件人邮箱账号
-            msg['To'] = formataddr(["FK", my_user])  # 括号里的对应收件人邮箱昵称、收件人邮箱账号
+            msg['To'] = formataddr(["me", my_user])  # 括号里的对应收件人邮箱昵称、收件人邮箱账号
             msg['Subject'] = mail_subject  # 邮件的主题，也可以说是标题
             server = smtplib.SMTP_SSL("smtp.mapxn.ml", 465)  # 发件人邮箱中的SMTP服务器，端口是25
             server.login(my_sender, my_pass)  # 括号中对应的是发件人邮箱账号、邮箱密码
@@ -30,32 +30,31 @@ def main_handler(event, context):
             ret = False
         return ret
 
-    # 验证send_key
     if get_send_key == send_key:
         ret = mail()
     else:
         ret = False
         print("send_key ERROR!")
-    
+
     if ret:
         data = [ { 'responds' : "短信发送成功", '短信内容' : mail_subject, '邮件正文' : mail_body} ]
-        body = json.dumps(data)
+        body = json.dumps(data, sort_keys=True, indent=2, separators=(',', ': '), ensure_ascii=False)
         print("Sms send success!")
         resp = {
             "isBase64Encoded": False,
             "statusCode": 200,
-            "headers": {"Content-Type":"application/json"},
+            "headers": {"Content-Type":"application/json; charset=UTF-8"},
             "body": body
         }
         return(resp)
         
     else:
         data = [ { 'responds' : "短信发送失败", '短信内容' : mail_subject, '邮件正文' : mail_body} ]
-        body = json.dumps(data)
+        body = json.dumps(data, sort_keys=True, indent=2, separators=(',', ': '), ensure_ascii=False)
         resp = {
             "isBase64Encoded": False,
             "statusCode": 200,
-            "headers": {"Content-Type":"application/json"},
+            "headers": {"Content-Type":"application/json; charset=UTF-8"},
             "body": body
         }
         return(resp)
